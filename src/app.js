@@ -4,16 +4,21 @@ const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
 const { NODE_ENV } = require('./config');
+const authRouter = require('./auth/auth-router')
+const chordsRouter = require('./Chords/ChordsRouter')
 
 const app = express();
 
-const morganOption = (NODE_ENV === 'production')
-    ? 'tiny'
-    : 'common'
 
-app.use(morgan(morganOption))
+
+app.use(morgan((NODE_ENV === 'production') ? 'tiny' : 'common', {
+    skip: () => NODE_ENV === 'test'
+}))
 app.use(cors());
 app.use(helmet());
+
+app.use('/api/auth/', authRouter)
+app.use('/api/chords', chordsRouter)
 
 app.get('/', (req, res) => {
     res.json({ message: 'Hello, world!' })
@@ -24,7 +29,7 @@ function errorHandler(error, req, res, next) {
         response = { message: 'Internal server error occured.' }
     } else {
         console.log(error);
-        response = { error, message: error.message }
+        response = { error: error.message, object: error }
     }
 
     res.status(500).json(response);
