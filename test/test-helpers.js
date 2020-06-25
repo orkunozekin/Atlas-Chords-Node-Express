@@ -175,8 +175,8 @@ function seedChordsTables(db, users, chords, notes, favorites = []) {
       await trx.into('favorites').insert(favorites)
       // update the auto sequence to match the forced id values
       await trx.raw(
-        `SELECT setval('users_id_seq', ?)`,
-        [users[users.length - 1].id],
+        `SELECT setval('chords_id_seq', ?)`,
+        [chords[chords.length - 1].id],
       )
     })
   }
@@ -192,22 +192,33 @@ function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
 function makeExpectedChord(users, chord, notes) {
     const user = users.find(user => user.id === chord.user_id)
 
-    const notesOfChords = notes.filter(note => note.chord_id === chord.id)
+    // const notesOfChords = notes.filter(note => note.chord_id === chord.id)
 
     return {
         id: chord.id,
         key: chord.key,
         type: chord.type,
-        notesOfChords,
-        user: {
-            id: user.id,
-            username: user.username,
-            password: user.password,
-            first_name: user.first_name,
-            last_name: user.last_name,
-            email: user.email
+        user_id: chord.user_id,
+        // user: {
+        //     id: user.id,
+        //     username: user.username,
+        //     password: user.password,
+        //     first_name: user.first_name,
+        //     last_name: user.last_name,
+        //     email: user.email
 
-        },
+        // },
+    }
+}
+
+function makeExpectedNote(notes) {
+    return {
+        id: notes.id,
+        string: notes.string,
+        fret: notes.fret,
+        finger: notes.finger,
+        strummed: notes.strummed,
+        chord_id: notes.chord_id
     }
 }
   
@@ -220,5 +231,6 @@ module.exports = {
     makeChordsFixtures,
     makeAuthHeader,
     seedChordsTables,
-    makeExpectedChord
+    makeExpectedChord,
+    makeExpectedNote
 }

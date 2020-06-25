@@ -5,6 +5,7 @@ const app = require('../src/app')
 const jwt = require('jsonwebtoken')
 
 
+
 describe('Auth Endpoints', function () {
     let db
 
@@ -56,23 +57,24 @@ describe('Auth Endpoints', function () {
 
         it(`responds 200 and JWT auth token using secret when valid credentials`, () => {
             const userValidCreds = {
-                username: testUser.username,
-                password: testUser.password
-            }
-            const expectedToken = jwt.sign(
-                { user_id: testUser.id }, 
-                process.env.JWT_SECRET,
-                {
-                    subject: testUser.username,
-                    algorithm: `HS256`
+                  username: testUser.username,
+                  password: 'password1',
                 }
-            )
             return supertest(app)
-                .post(`/api/auth/login`)
-                .send(userValidCreds)
-                .expect(200, {
-                    authToken: expectedToken
-                })
-        })
+              .post('/api/auth/login')
+              .send(userValidCreds)
+              .then(response => {
+                  
+              return jwt.verify(response.body.authToken, process.env.JWT_SECRET)
+            })
+              .then((decoded) => {
+                  console.log(decoded)
+              expect(decoded.user_id).to.eql(testUser.id)
+            })
+              .catch((err) => {
+              throw err
+            })
+          })
     })
 })
+
