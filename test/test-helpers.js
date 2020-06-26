@@ -84,7 +84,7 @@ function makeNotesArray(chords) {
             fret: 3,
             finger: 2,
             strummed: true,
-            chord_id: chords[1].id
+            chord_id: chords[0].id
         },
         {   
             id: 3,
@@ -92,7 +92,7 @@ function makeNotesArray(chords) {
             fret: null,
             finger: null,
             strummed: false,
-            chord_id: chords[2].id
+            chord_id: chords[0].id
         },
         {   
             id: 4,
@@ -100,7 +100,71 @@ function makeNotesArray(chords) {
             fret: 2,
             finger: 3,
             strummed: true,
-            chord_id: chords[3].id
+            chord_id: chords[0].id
+        },
+        {   
+            id: 5,
+            string: 1,
+            fret: 2,
+            finger: 3,
+            strummed: true,
+            chord_id: chords[0].id
+        },
+        {   
+            id: 6,
+            string: 5,
+            fret: 2,
+            finger: 3,
+            strummed: true,
+            chord_id: chords[0].id
+        },
+        {   
+            id: 7,
+            string: 5,
+            fret: 2,
+            finger: 3,
+            strummed: true,
+            chord_id: chords[1].id
+        },
+        {   
+            id: 8,
+            string: 5,
+            fret: 2,
+            finger: 3,
+            strummed: true,
+            chord_id: chords[1].id
+        },
+        {   
+            id: 9,
+            string: 5,
+            fret: 2,
+            finger: 3,
+            strummed: true,
+            chord_id: chords[1].id
+        },
+        {   
+            id: 10,
+            string: 5,
+            fret: 2,
+            finger: 3,
+            strummed: true,
+            chord_id: chords[1].id
+        },
+        {   
+            id: 11,
+            string: 5,
+            fret: 2,
+            finger: 3,
+            strummed: true,
+            chord_id: chords[1].id
+        },
+        {   
+            id: 12,
+            string: 5,
+            fret: 2,
+            finger: 3,
+            strummed: true,
+            chord_id: chords[1].id
         },
     ]
 }
@@ -141,14 +205,27 @@ function makeChordsFixtures() {
 
 
 function cleanTables(db) {
-    return db.raw(
-      `TRUNCATE
-        users,
-        chords,
-        musical_notes,
-        favorites
-        RESTART IDENTITY CASCADE`
+    return db.transaction(trx =>
+        trx.raw(
+          `TRUNCATE
+            chords,
+            users,
+            musical_notes,
+            favorites
+          `
     )
+    .then(() =>
+      Promise.all([
+        trx.raw(`ALTER SEQUENCE chords_id_seq minvalue 0 START WITH 1`),
+        trx.raw(`ALTER SEQUENCE users_id_seq minvalue 0 START WITH 1`),
+        trx.raw(`ALTER SEQUENCE musical_notes_id_seq minvalue 0 START WITH 1`),
+        trx.raw(`ALTER SEQUENCE favorites_id_seq minvalue 0 START WITH 1`),
+        trx.raw(`SELECT setval('chords_id_seq', 0)`),
+        trx.raw(`SELECT setval('users_id_seq', 0)`),
+        trx.raw(`SELECT setval('musical_notes_id_seq', 0)`),
+        trx.raw(`SELECT setval('favorites_id_seq', 0)`),
+      ])
+    ))
 }
 
 function seedUsers(db, users) {
@@ -177,7 +254,15 @@ function seedChordsTables(db, users, chords, notes, favorites = []) {
       await trx.raw(
         `SELECT setval('chords_id_seq', ?)`,
         [chords[chords.length - 1].id],
-      )
+        )
+        await trx.raw(
+            `SELECT setval('musical_notes_id_seq', ?)`,
+            [notes[notes.length - 1].id],
+        )
+        await trx.raw(
+            `SELECT setval('favorites_id_seq', ?)`,
+            [favorites[favorites.length - 1].id],
+          )
     })
   }
 
@@ -192,13 +277,23 @@ function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
 function makeExpectedChord(users, chord, notes) {
     const user = users.find(user => user.id === chord.user_id)
 
-    // const notesOfChords = notes.filter(note => note.chord_id === chord.id)
-
+    const notesOfChords = notes.filter(note => note.chord_id === chord.id)
+    
     return {
         id: chord.id,
         key: chord.key,
         type: chord.type,
         user_id: chord.user_id,
+        notes: [
+            {
+                id: notesOfChords.id,
+                string: notesOfChords.string,
+                fret: notesOfChords.fret,
+                finger: notesOfChords.finger,
+                strummed: notesOfChords.strummed,
+                chord_id: notesOfChords.chord_id
+            }
+        ]
         // user: {
         //     id: user.id,
         //     username: user.username,
@@ -221,6 +316,8 @@ function makeExpectedNote(notes) {
         chord_id: notes.chord_id
     }
 }
+
+
   
 module.exports = {
     cleanTables,

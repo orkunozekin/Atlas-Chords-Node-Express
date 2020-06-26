@@ -76,7 +76,7 @@ describe('User Endpoints', function () {
                     last_name: 'test last_name',
                     email: 'test email'
                 }
-                console.log(userLongPassword.password.length)
+                // console.log(userLongPassword.password.length)
                 return supertest(app) 
                     .post('/api/users')
                     .send(userLongPassword)
@@ -141,7 +141,7 @@ describe('User Endpoints', function () {
             })
         })
         context(`Happy path`, () => {
-            it(`respomds 201, serialzied user, storing bcryped password`, () => {
+            it(`responds 201, serialzied user, storing bcryped password`, () => {
                 const newUser = {
                     username: 'test username',
                     password: '11AAaa!!',

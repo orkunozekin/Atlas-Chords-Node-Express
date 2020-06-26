@@ -3,6 +3,14 @@ const ChordsService = {
         return db  
             .from('chords')
             .select('*')    
+
+    },
+
+    getAllNotesForChord(db, chordId) {
+        return db
+            .from('musical_notes')
+            .select('*')
+            .where('chord_id', chordId)
     },
 
     getById(db, id) {
@@ -47,6 +55,17 @@ const ChordsService = {
                 )
     },
 
+    insertNotesForChord(db, notesWithChordId) {
+        return db
+            .into('musical_notes')
+            .insert(notesWithChordId)
+            .returning('*')
+            // .then(([chord]) => chord)
+            // .then(chord => 
+            //     ChordsService.getById(db, chord.id)
+            //     )
+    },
+
     serializeChord(chord) {
         return {
             id: chord.id,
@@ -54,6 +73,7 @@ const ChordsService = {
             type: chord.type,
             user_id: chord.user_id,
             // user: chord.user || {}
+            notes: chord.notes
         }
     }
 }

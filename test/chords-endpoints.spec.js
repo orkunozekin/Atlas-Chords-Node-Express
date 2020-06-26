@@ -53,7 +53,7 @@ describe('Chords Endpoints', function () { //happy paths only
     
     //Endpoints : /api/chords        /api/chords/chord_id(for a viewing a single chord)
 
-    describe('GET /api/chords', () => {
+    describe.only('GET /api/chords', () => {
         context(`Given chords`, () => {
 
             beforeEach('insert chord', () => 
@@ -92,7 +92,42 @@ describe('Chords Endpoints', function () { //happy paths only
                 type: testChord.type,
                 user_id: testChord.user_id,
                 notes: [
-                    {}
+                    {
+                        string: 1,
+                        fret: 3,
+                        finger: 4,
+                        strummed: true,                       
+                    },
+                    {
+                        string: 2,
+                        fret: 3,
+                        finger: 4,
+                        strummed: true,                       
+                    },
+                    {
+                        string: 3,
+                        fret: 3,
+                        finger: 4,
+                        strummed: true,                       
+                    },
+                    {
+                        string: 4,
+                        fret: 3,
+                        finger: 4,
+                        strummed: true,                       
+                    },
+                    {
+                        string: 5,
+                        fret: 3,
+                        finger: 4,
+                        strummed: true,                       
+                    },
+                    {
+                        string: 6,
+                        fret: 3,
+                        finger: 4,
+                        strummed: false,                       
+                    }
                 ]
             }
             return supertest(app)
@@ -105,6 +140,7 @@ describe('Chords Endpoints', function () { //happy paths only
                     expect(res.body).to.have.property('key')
                     expect(res.body).to.have.property('type')
                     expect(res.body).to.have.property('user_id')
+                    expect(res.body).to.have.property('notes')
                 })
                 .expect(res => 
                     db
