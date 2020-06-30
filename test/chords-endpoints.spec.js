@@ -62,7 +62,7 @@ describe('Chords Endpoints', function () { //happy paths only
                 )
             )
             
-            it(`responds with 200 and all of the chords`, () => {
+            it.only(`responds with 200 and all of the chords`, () => {
                 const expectedChords = testChords.map(chord => 
                     helpers.makeExpectedChord(testUsers, chord, testNotes)
                 )

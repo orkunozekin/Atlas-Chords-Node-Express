@@ -12,7 +12,7 @@ chordsRouter
         let chords;
         ChordsService.getAllChords(req.app.get('db'))
             .then(_chords => {
-                
+               
                 chords = _chords
                 // for (const value of chords) {
                 //     console.log(value);
@@ -23,7 +23,8 @@ chordsRouter
                 return Promise.all(notesPromises)
             })    
             .then((data) => {
-                console.log(data[0], chords[0])
+                // console.log(data[0], chords[0])
+                
                 const SerializedChordsWithNotes = chords.map((chord, index) => {
                     return ChordsService.serializeChord({
                         ...chord, notes: data[index]
@@ -48,8 +49,8 @@ chordsRouter
 
 
     .post(requireAuth, jsonBodyParser, (req, res, next) => { // get notes from the body
-        const { key, type, user_id, notes } = req.body
-        const newChord = { key, type, user_id }
+        const { key, type, notes } = req.body
+        const newChord = { key, type, user_id: req.user.id } 
 
         for (const [key, value] of Object.entries(newChord))
             if (value == null)
@@ -82,12 +83,29 @@ chordsRouter
             .catch(next)
     })
     
-chordsRouter
+// chordsRouter
+//     .route('/:chord_id')
+//     .all(requireAuth)
+//     .all(checkChordExists)
+//     .get((req, res) => {
+
+
+//         res.json(ChordsService.serializeChord(res.chord))
+//     })
+
+    chordsRouter
     .route('/:chord_id')
-    .all(requireAuth)
+    // .all(requireAuth)
     .all(checkChordExists)
-    .get((req, res) => {
-        res.json(ChordsService.serializeChord(res.chord))
+        .get((req, res) => {
+       console.log(res.chord)
+        ChordsService.getAllNotesForChord(req.app.get('db'), res.chord.id)
+            .then(notes => {
+                console.log(notes)
+                const SerializedChordWithNotes = ChordsService.serializeChord({...res.chord, notes})
+                res.json(SerializedChordWithNotes)
+            })
+       
     })
 
 async function checkChordExists(req, res, next) {
