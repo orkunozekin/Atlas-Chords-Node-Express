@@ -17,7 +17,7 @@ describe('Chords Endpoints', function () { //happy paths only
     before('make knex instance', () => {
         db = knex({
             client: 'pg',
-            connection: process.env.TEST_DB_URL
+            connection: process.env.TEST_DATABASE_URL
         })
         app.set('db', db)
     })
@@ -53,7 +53,7 @@ describe('Chords Endpoints', function () { //happy paths only
     
     //Endpoints : /api/chords        /api/chords/chord_id(for a viewing a single chord)
 
-    describe.only('GET /api/chords', () => {
+    describe('GET /api/chords', () => {
         context(`Given chords`, () => {
 
             beforeEach('insert chord', () => 
@@ -62,10 +62,12 @@ describe('Chords Endpoints', function () { //happy paths only
                 )
             )
             
-            it.only(`responds with 200 and all of the chords`, () => {
+            it(`responds with 200 and all of the chords`, () => {
+            
                 const expectedChords = testChords.map(chord => 
                     helpers.makeExpectedChord(testUsers, chord, testNotes)
                 )
+               
                 return supertest(app)
                     .get('/api/chords')
                     .expect(200, expectedChords)
@@ -148,7 +150,7 @@ describe('Chords Endpoints', function () { //happy paths only
                         .select('*')
                         .where({ id: res.body.id })
                         .then(row => {
-                            console.log(row)
+                          
                         })
                     )
         })

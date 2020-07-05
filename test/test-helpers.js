@@ -277,32 +277,16 @@ function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
 function makeExpectedChord(users, chord, notes) {
     const user = users.find(user => user.id === chord.user_id)
 
-    const notesOfChords = notes.filter(note => note.chord_id === chord.id)
-    
+    const notesOfChords = notes.filter(note => note.chord_id == chord.id)
+    console.log(notes)
     return {
         id: chord.id,
         key: chord.key,
         type: chord.type,
         user_id: chord.user_id,
-        notes: [
-            {
-                id: notesOfChords.id,
-                string: notesOfChords.string,
-                fret: notesOfChords.fret,
-                finger: notesOfChords.finger,
-                strummed: notesOfChords.strummed,
-                chord_id: notesOfChords.chord_id
-            }
-        ]
-        // user: {
-        //     id: user.id,
-        //     username: user.username,
-        //     password: user.password,
-        //     first_name: user.first_name,
-        //     last_name: user.last_name,
-        //     email: user.email
-
-        // },
+        notes: notesOfChords
+    
+      
     }
 }
 

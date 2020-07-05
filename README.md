@@ -1,26 +1,21 @@
-# Express Boilerplate!
+The framework used for creating this node server is Express.
 
-This is a boilerplate project used for starting new projects!
+This express web server handles GET and POST HTTP requests.
 
-## Set up
+The endpoints for GET request are "/chords" and "/chords/chord_id". 
 
-Complete the following steps to start a new project (NEW-PROJECT-NAME):
+The endpoint for POST request is "/chords".
 
-1. Clone this repository to your local machine `git clone BOILERPLATE-URL NEW-PROJECTS-NAME`
-2. `cd` into the cloned repository
-3. Make a fresh start of the git history for this project with `rm -rf .git && git init`
-4. Install the node dependencies `npm install`
-5. Move the example Environment file to `.env` that will be ignored by git and read by the express server `mv example.env .env`
-6. Edit the contents of the `package.json` to use NEW-PROJECT-NAME instead of `"name": "express-boilerplate",`
+There is one database that has four tables in it, which are respectively "users", "chords", "musical_noteS", and "favorites".
+There is a one-to-many relationship between "users" and "chords" tables. 
+There is a one-to-many relationship between "chords" and "musical_notes" tables. 
 
-## Scripts
+The tables are seeded using migration scripts.
 
-Start the application `npm start`
+The URL for the live link for the server is https://still-brushlands-47885.herokuapp.com and all of the routers are set to "/api". 
+Therefore, if ah HTTP request is to be made to this server, the url to be used would be https://still-brushlands-47885.herokuapp.com/api . 
 
-Start nodemon for the application `npm run dev`
+The middleware used for authentication is JSON Web Token(JWT). 
 
-Run the tests `npm test`
 
-## Deploying
 
-When your new project is ready for deployment, add a new Heroku application with `heroku create`. This will make a new git remote called "heroku" and you can then `npm run deploy` which will push to this remote's master branch.
