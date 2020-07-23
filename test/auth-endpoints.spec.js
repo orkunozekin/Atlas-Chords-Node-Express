@@ -68,7 +68,6 @@ describe('Auth Endpoints', function () {
               return jwt.verify(response.body.authToken, process.env.JWT_SECRET)
             })
               .then((decoded) => {
-                //   console.log(decoded)
               expect(decoded.user_id).to.eql(testUser.id)
             })
               .catch((err) => {

@@ -12,37 +12,18 @@ chordsRouter
         let chords;
         ChordsService.getAllChords(req.app.get('db'))
             .then(_chords => {
-               
                 chords = _chords
-                // for (const value of chords) {
-                //     console.log(value);
-                //     chord = value
-                // }
-        
                 const notesPromises = chords.map(chord => ChordsService.getAllNotesForChord(req.app.get('db'), chord.id))
                 return Promise.all(notesPromises)
             })    
             .then((data) => {
-                // console.log(data[0], chords[0])
-                
                 const SerializedChordsWithNotes = chords.map((chord, index) => {
                     return ChordsService.serializeChord({
                         ...chord, notes: data[index]
                     })
                 })
-               
                 res.json(SerializedChordsWithNotes)
             })
-           
-        // return ChordsService.getAllNotes(req.app.get('db'))
-        //     .then(notesRes => {
-        //         console.log(notesRes)
-              
-               
-        //         console.log(chords)
-        //         res.json(ChordsService.serializeChord({...chords, notes: notesWithChordId}))
-            // })    
-        
         .catch(next)
     })
 
@@ -71,10 +52,7 @@ chordsRouter
                 return ChordsService.insertNotesForChord(req.app.get('db'), notesWithChordId)
             })
             .then(notesResponse => {
-                // console.log(chord)
-           
                 //before sending response, insert all 6 notes. 
-                // console.log(notesResponse)
                 res 
                     .status(201)
                     .location(path.posix.join(req.originalUrl, `/${chord.id}`))
@@ -83,19 +61,9 @@ chordsRouter
             .catch(next)
     })
     
-// chordsRouter
-//     .route('/:chord_id')
-//     .all(requireAuth)
-//     .all(checkChordExists)
-//     .get((req, res) => {
-
-
-//         res.json(ChordsService.serializeChord(res.chord))
-//     })
 
     chordsRouter
     .route('/:chord_id')
-    // .all(requireAuth)
     .all(checkChordExists)
         .get((req, res) => {
        console.log(res.chord)
@@ -105,7 +73,6 @@ chordsRouter
                 const SerializedChordWithNotes = ChordsService.serializeChord({...res.chord, notes})
                 res.json(SerializedChordWithNotes)
             })
-       
     })
 
 async function checkChordExists(req, res, next) {

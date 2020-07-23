@@ -28,63 +28,39 @@ describe('Chords Endpoints', function () { //happy paths only
 
     afterEach('cleanup', () => helpers.cleanTables(db))
 
-//     describe(`Protected endpoints`, () => {
-//         beforeEach('insert chords', () => 
-//         helpers.seedChordsTables(
-//             db,
-//             testUsers,
-//             testChords,
-//             testNotes,
-//             testFavorites
-//         )
-      
-//         )
-        
-//         const protectedEndpoints = [
-//             {
-//                 name: 'GET /api/chords/chord_id',
-//                 path: '/api/chords/1'
-//             },
-//             {
-//                 name: 'GET /api/'
-//             }
-//         ]
-// })
-    
-    //Endpoints : /api/chords        /api/chords/chord_id(for a viewing a single chord)
 
     describe('GET /api/chords', () => {
         context(`Given chords`, () => {
 
-            beforeEach('insert chord', () => 
+            beforeEach('insert chord', () =>
                 helpers.seedChordsTables(
                     db, testUsers, testChords, testNotes, testFavorites
                 )
             )
-            
+
             it(`responds with 200 and all of the chords`, () => {
-            
-                const expectedChords = testChords.map(chord => 
+
+                const expectedChords = testChords.map(chord =>
                     helpers.makeExpectedChord(testUsers, chord, testNotes)
                 )
-               
+
                 return supertest(app)
                     .get('/api/chords')
                     .expect(200, expectedChords)
 
             })
-            
-           
+
+
         })
-    }) 
+    })
 
     describe('POST /api/chords', () => {
-        
-        beforeEach('insert chord', () => 
-        helpers.seedChordsTables(
-            db, testUsers, testChords, testNotes, testFavorites
+
+        beforeEach('insert chord', () =>
+            helpers.seedChordsTables(
+                db, testUsers, testChords, testNotes, testFavorites
+            )
         )
-    )
 
         it(`submits a chord, responding with 201 and the new chord`, function () {
             const testChord = testChords[0]
@@ -98,37 +74,37 @@ describe('Chords Endpoints', function () { //happy paths only
                         string: 1,
                         fret: 3,
                         finger: 4,
-                        strummed: true,                       
+                        strummed: true,
                     },
                     {
                         string: 2,
                         fret: 3,
                         finger: 4,
-                        strummed: true,                       
+                        strummed: true,
                     },
                     {
                         string: 3,
                         fret: 3,
                         finger: 4,
-                        strummed: true,                       
+                        strummed: true,
                     },
                     {
                         string: 4,
                         fret: 3,
                         finger: 4,
-                        strummed: true,                       
+                        strummed: true,
                     },
                     {
                         string: 5,
                         fret: 3,
                         finger: 4,
-                        strummed: true,                       
+                        strummed: true,
                     },
                     {
                         string: 6,
                         fret: 3,
                         finger: 4,
-                        strummed: false,                       
+                        strummed: false,
                     }
                 ]
             }
@@ -144,25 +120,24 @@ describe('Chords Endpoints', function () { //happy paths only
                     expect(res.body).to.have.property('user_id')
                     expect(res.body).to.have.property('notes')
                 })
-                .expect(res => 
+                .expect(res =>
                     db
                         .from('chords')
                         .select('*')
                         .where({ id: res.body.id })
                         .then(row => {
-                          
+
                         })
-                    )
+                )
         })
-          
     })
-   
+
     describe('GET /api/chords/chord_id', () => {
-        beforeEach('insert chord', () => 
-        helpers.seedChordsTables(
-            db, testUsers, testChords, testNotes, testFavorites
+        beforeEach('insert chord', () =>
+            helpers.seedChordsTables(
+                db, testUsers, testChords, testNotes, testFavorites
+            )
         )
-    )
         it('responds with 200 and the specified chord', () => {
             const chordId = 2
             const expectedChord = helpers.makeExpectedChord(
@@ -176,6 +151,4 @@ describe('Chords Endpoints', function () { //happy paths only
                 .expect(200, expectedChord)
         })
     })
-
-
 })
